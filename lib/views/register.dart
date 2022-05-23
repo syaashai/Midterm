@@ -50,7 +50,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('New Product'),
+        title: const Text('New User'),
       ),
       body: SingleChildScrollView(
         child: Center(
@@ -64,7 +64,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       child: GestureDetector(
                           onTap: () => {_takePictureDialog()},
                           child: SizedBox(
-                              height: screenHeight / 2.5,
+                              height: screenHeight / 3.9,
                               width: screenWidth,
                               child: _image == null
                                   ? Image.asset(pathAsset)
@@ -188,6 +188,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
       maxHeight: 800,
       maxWidth: 800,
     );
+    if (pickedFile != null) {
+      _image = File(pickedFile.path);
+    }
   }
 
   _cameraPicker() async {
@@ -197,6 +200,34 @@ class _RegisterScreenState extends State<RegisterScreen> {
       maxHeight: 800,
       maxWidth: 800,
     );
+    if (pickedFile != null) {
+      _image = File(pickedFile.path);
+    }
+  }
+
+  Future<void> _cropImage() async {
+    File? croppedFile = await ImageCropper().cropImage(
+        sourcePath: _image!.path,
+        aspectRatioPresets: [
+          CropAspectRatioPreset.square,
+          // CropAspectRatioPreset.ratio3x2,
+          // CropAspectRatioPreset.original,
+          // CropAspectRatioPreset.ratio4x3,
+          // CropAspectRatioPreset.ratio16x9
+        ],
+        androidUiSettings: const AndroidUiSettings(
+            toolbarTitle: 'Cropper',
+            toolbarColor: Colors.deepOrange,
+            toolbarWidgetColor: Colors.white,
+            initAspectRatio: CropAspectRatioPreset.original,
+            lockAspectRatio: false),
+        iosUiSettings: const IOSUiSettings(
+          minimumAspectRatio: 1.0,
+        ));
+    if (croppedFile != null) {
+      _image = croppedFile;
+      setState(() {});
+    }
   }
 
   void _insertDialog() {
@@ -246,7 +277,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     String _prphoneno = _prphonenoEditingController.text;
     String _prhomeaddress = _prhomeaddressEditingController.text;
     String base64Image = base64Encode(_image!.readAsBytesSync());
-    http.post(Uri.parse("http://10.143.137.226/mytutor/php/user_login.php"),
+    http.post(Uri.parse("http://10.143.137.226/mytutor/php/register_user.php"),
         body: {
           "name": _prname,
           "email": _premail,
