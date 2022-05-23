@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:mytutor/views/mainscreen.dart';
+import 'package:mytutor/views/register.dart';
+import '/models/user.dart';
+import '/views/register.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -28,59 +31,63 @@ class _LoginScreenState extends State<LoginScreen> {
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(32, 16, 32, 0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                    height: screenHeight / 2.5,
-                    width: screenWidth,
-                    child: Image.asset('assets/tutoring.png')),
-                const Text(
-                  "Login",
-                  style: TextStyle(fontSize: 24),
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              SizedBox(
+                  height: screenHeight / 2.5,
+                  width: screenWidth,
+                  child: Image.asset('assets/tutoring.png')),
+              const Text(
+                "Login",
+                style: TextStyle(fontSize: 24),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
+                child: TextField(
+                  controller: emailCtrller,
+                  decoration: InputDecoration(
+                      hintText: "Email",
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(5.0))),
+                  keyboardType: TextInputType.emailAddress,
                 ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
-                  child: TextField(
-                    controller: emailCtrller,
-                    decoration: InputDecoration(
-                        hintText: "Email",
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5.0))),
-                    keyboardType: TextInputType.emailAddress,
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
+                child: TextField(
+                  controller: passwordCtrller,
+                  decoration: InputDecoration(
+                      hintText: "Password",
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(5.0))),
+                  keyboardType: TextInputType.visiblePassword,
+                  obscureText: true,
+                ),
+              ),
+              Container(
+                alignment: Alignment.center,
+                child: SizedBox(
+                  width: screenWidth,
+                  height: 40,
+                  child: ElevatedButton(
+                    child: const Text("Login"),
+                    onPressed: _loginUser,
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
-                  child: TextField(
-                    controller: passwordCtrller,
-                    decoration: InputDecoration(
-                        hintText: "Password",
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5.0))),
-                    keyboardType: TextInputType.visiblePassword,
-                    obscureText: true,
-                  ),
-                ),
-                Row(
-                  children: [
-                    Checkbox(value: remember, onChanged: _onRememberMe),
-                    const Text("Remember Me")
-                  ],
-                ),
-                Container(
+              ),
+              Padding(
+                padding: EdgeInsets.only(top: 5),
+              ),
+              Container(
                   alignment: Alignment.center,
                   child: SizedBox(
-                    width: screenWidth,
-                    height: 50,
-                    child: ElevatedButton(
-                      child: const Text("Login"),
-                      onPressed: _loginUser,
-                    ),
-                  ),
-                )
-              ],
-            ),
+                      width: screenWidth,
+                      height: 40,
+                      child: ElevatedButton(
+                        child: const Text("Sign in"),
+                        onPressed: _registerUser,
+                      )))
+            ]),
           ),
         ],
       ),
@@ -103,10 +110,7 @@ class _LoginScreenState extends State<LoginScreen> {
         var data = jsonDecode(response.body);
         print(data);
         if (response.statusCode == 200 && data['status'] == 'success') {
-          String name = data['data']['name'];
-          String email = data['data']['email'];
-          print(name);
-          print(email);
+          User user = User.fromJson(data['data']);
           Fluttertoast.showToast(
               msg: "Success",
               toastLength: Toast.LENGTH_SHORT,
@@ -120,8 +124,7 @@ class _LoginScreenState extends State<LoginScreen> {
               context,
               MaterialPageRoute(
                   builder: (content) => MainScreen(
-                        name: name,
-                        email: email,
+                        user: user,
                       )));
         } else {
           Fluttertoast.showToast(
@@ -133,5 +136,10 @@ class _LoginScreenState extends State<LoginScreen> {
         }
       });
     }
+  }
+
+  void _registerUser() {
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (content) => RegisterScreen()));
   }
 }

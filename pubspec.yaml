@@ -32,6 +32,8 @@ dependencies:
     sdk: flutter
   fluttertoast: ^8.0.9
   http: ^0.13.4
+  image_cropper: ^2.0.3
+  image_picker: ^0.8.5+3
 
 dev_dependencies:
   flutter_lints: ^1.0.0
@@ -52,6 +54,7 @@ flutter:
   assets:
     - assets/tutor.png
     - assets/tutoring.png
+    - assets/camera.png
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
   # An image asset can refer to one or more resolution-specific "variants", see
